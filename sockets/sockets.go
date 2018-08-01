@@ -12,7 +12,9 @@ func Init() {
 	go hub.run()
 }
 
-// WebsocketHTTPHandler is the handler for starting up ws client connections
-func WebsocketHTTPHandler(w http.ResponseWriter, r *http.Request) {
-	serveWs(hub, w, r)
+// WebsocketHandler is the handler for starting up ws client connections
+type WebsocketHandler struct{}
+
+func (w WebsocketHandler) ServeHTTP(wr http.ResponseWriter, r *http.Request) {
+	serveWs(hub, wr, r)
 }

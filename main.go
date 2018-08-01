@@ -8,22 +8,10 @@ import (
 	"path/filepath"
 
 	"github.com/kirkbyers/openstall-master/db"
+	"github.com/kirkbyers/openstall-master/routes"
 	"github.com/kirkbyers/openstall-master/sockets"
 	homedir "github.com/mitchellh/go-homedir"
 )
-
-func serveChatExample(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.URL)
-	if r.URL.Path != "/" {
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
-	}
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	http.ServeFile(w, r, "chat-example.html")
-}
 
 func main() {
 	var err error
@@ -41,11 +29,12 @@ func main() {
 	dbPath := filepath.Join(home, "openstall.db")
 	must(db.Init(dbPath))
 
-	http.HandleFunc("/", serveChatExample)
-	http.HandleFunc("/ws", sockets.WebsocketHTTPHandler)
+	handler := http.NewServeMux()
+	handler.Handle("/ws", sockets.WebsocketHandler{})
+	handler.Handle("/", routes.ChatExampleHandler{})
 
 	fmt.Printf("Server Listening on port %v\n", *port)
-	err = http.ListenAndServe(fmt.Sprintf(":%v", *port), nil)
+	err = http.ListenAndServe(fmt.Sprintf(":%v", *port), handler)
 	if err != nil {
 		fmt.Println("There was a problem listing and serving", err)
 	}
