@@ -1,11 +1,10 @@
 package routes
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"github.com/kirkbyers/openstall-master/db"
+	"github.com/kirkbyers/openstall-master/sockets"
 )
 
 // Init wires up all http routes
@@ -29,15 +28,19 @@ func (chat ChatExampleHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	http.ServeFile(w, r, "chat-example.html")
 }
 
-func registerHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	var m db.Monitor
-	d := json.NewDecoder(r.Body)
-	if err := d.Decode(&m); err != nil {
-		// w.Write()
-		return
-	}
+// WebsocketHandler is the handler for starting up ws client connections
+type WebsocketHandler struct{}
+
+func (w WebsocketHandler) ServeHTTP(wr http.ResponseWriter, r *http.Request) {
+	// if r.Method != "POST" {
+	// 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	// 	return
+	// }
+	// var m db.Monitor
+	// d := json.NewDecoder(r.Body)
+	// if err := d.Decode(&m); err != nil {
+	// 	// w.Write()
+	// 	return
+	// }
+	sockets.ServeWs(sockets.PublicHub, wr, r)
 }

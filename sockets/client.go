@@ -103,8 +103,8 @@ func (c *Client) writePump() {
 	}
 }
 
-// serveWs handles websock requests from the peer
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+// ServeWs handles websock requests from the peer
+func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Println(err)

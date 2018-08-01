@@ -30,7 +30,7 @@ func main() {
 	must(db.Init(dbPath))
 
 	handler := http.NewServeMux()
-	handler.Handle("/ws", sockets.WebsocketHandler{})
+	handler.Handle("/ws", routes.WebsocketHandler{})
 	handler.Handle("/", routes.ChatExampleHandler{})
 
 	fmt.Printf("Server Listening on port %v\n", *port)
