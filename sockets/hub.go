@@ -1,5 +1,7 @@
 package sockets
 
+import "fmt"
+
 // Hub maintains the set of active cleints and broadcasts message to the clients
 type Hub struct {
 	// Registered Clients
@@ -32,6 +34,7 @@ func (h *Hub) run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
+			fmt.Println(string(message))
 			for client := range h.clients {
 				select {
 				case client.send <- message:

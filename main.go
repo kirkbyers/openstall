@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/kirkbyers/openstall-master/db"
+	door "github.com/kirkbyers/openstall-master/door-monitor-example"
 	"github.com/kirkbyers/openstall-master/routes"
 	"github.com/kirkbyers/openstall-master/sockets"
 	homedir "github.com/mitchellh/go-homedir"
@@ -31,13 +32,15 @@ func main() {
 
 	handler := http.NewServeMux()
 	handler.Handle("/ws", routes.WebsocketHandler{})
-	handler.Handle("/", routes.ChatExampleHandler{})
 	handler.Handle("/register", routes.RegisterHandler{})
 
 	fmt.Printf("Server Listening on port %v\n", *port)
-	err = http.ListenAndServe(fmt.Sprintf(":%v", *port), handler)
-	if err != nil {
-		fmt.Println("There was a problem listing and serving", err)
+	go http.ListenAndServe(fmt.Sprintf(":%v", *port), handler)
+	door.Test()
+	// if err != nil {
+	// 	fmt.Println("There was a problem listing and serving", err)
+	// }
+	for {
 	}
 }
 
