@@ -11,21 +11,21 @@ import (
 // Hub maintains the set of active cleints and broadcasts message to the clients
 type Hub struct {
 	// Registered Clients
-	clients map[*Client]bool
+	pubClients map[*PubClient]bool
 	// Inbound msgs from clients
 	broadcast chan []byte
 	// Register reqs from clients
-	register chan *Client
+	register chan *PubClient
 	// Unregister requests from clients
-	unregister chan *Client
+	unregister chan *PubClient
 }
 
 func newHub() *Hub {
 	return &Hub{
 		broadcast:  make(chan []byte),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
+		register:   make(chan *PubClient),
+		unregister: make(chan *PubClient),
+		pubClients: make(map[*PubClient]bool),
 	}
 }
 
@@ -33,10 +33,10 @@ func (h *Hub) run() {
 	for {
 		select {
 		case client := <-h.register:
-			h.clients[client] = true
+			h.pubClients[client] = true
 		case client := <-h.unregister:
-			if _, ok := h.clients[client]; ok {
-				delete(h.clients, client)
+			if _, ok := h.pubClients[client]; ok {
+				delete(h.pubClients, client)
 				close(client.send)
 			}
 		case message := <-h.broadcast:

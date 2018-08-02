@@ -30,8 +30,9 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-// Client is the middleman type connecting to Hub
-type Client struct {
+// PubClient is the middleman type connecting to Hub
+// Only has access to readPump
+type PubClient struct {
 	hub *Hub
 	// WS connection
 	conn *websocket.Conn
@@ -40,7 +41,7 @@ type Client struct {
 }
 
 // readPump pumps message from the websocker connection to the hub
-func (c *Client) readPump() {
+func (c *PubClient) readPump() {
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
@@ -68,7 +69,7 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client := &PubClient{hub: hub, conn: conn, send: make(chan []byte, 256)}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines
