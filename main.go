@@ -37,9 +37,7 @@ func main() {
 	fmt.Printf("Server Listening on port %v\n", *port)
 	go http.ListenAndServe(fmt.Sprintf(":%v", *port), handler)
 	door.Test()
-	// if err != nil {
-	// 	fmt.Println("There was a problem listing and serving", err)
-	// }
+	// client.Test() // There was a message not matching type Monitor sent: json: cannot unmarshal number into Go value of type db.Monitor
 	for {
 	}
 }

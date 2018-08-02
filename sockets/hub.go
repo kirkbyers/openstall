@@ -1,6 +1,12 @@
 package sockets
 
-import "fmt"
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+
+	"github.com/kirkbyers/openstall-master/db"
+)
 
 // Hub maintains the set of active cleints and broadcasts message to the clients
 type Hub struct {
@@ -34,14 +40,10 @@ func (h *Hub) run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
-			fmt.Println(string(message))
-			for client := range h.clients {
-				select {
-				case client.send <- message:
-				default:
-					close(client.send)
-					delete(h.clients, client)
-				}
+			var m db.Monitor
+			d := json.NewDecoder(bytes.NewBuffer(message))
+			if err := d.Decode(&m); err != nil {
+				fmt.Println("There was a message not matching type Monitor sent:", err)
 			}
 		}
 	}

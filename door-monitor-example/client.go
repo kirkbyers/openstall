@@ -13,15 +13,15 @@ import (
 	"github.com/kirkbyers/openstall-master/db"
 )
 
-// Init registers the test as door monitor and
+// Test registers the test as door monitor and
 // writes the current time every second to the ws conenction
 func Test() {
 	// Register as monitor
 	regURL := url.URL{Scheme: "http", Host: "localhost:4567", Path: "/register"}
 	m := &db.Monitor{
-		ID:     "test-00",
-		Name:   "test-monit-00",
-		Type:   "test",
+		ID:     "test-01",
+		Name:   "test-monit-01",
+		Type:   "door",
 		Status: "open",
 	}
 	mJSON, err := json.Marshal(m)
@@ -40,19 +40,31 @@ func Test() {
 	}
 	defer c.Close()
 
-	// Start ticker for every second
-	ticker := time.NewTicker(time.Second)
+	// Start ticker for every other second
+	ticker := time.NewTicker(2 * time.Second)
+	tracker := 0
 	defer ticker.Stop()
 
 	for {
 		select {
-		case t := <-ticker.C:
+		case <-ticker.C:
+			var err error
+			if tracker == 0 {
+				m.Status = "open"
+			} else {
+				m.Status = "close"
+			}
+			mJSON, err = json.Marshal(m)
+			if err != nil {
+				fmt.Println("There was a problem converting monitor to JSON:", err)
+			}
 			// Write the ticker time every message
-			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
+			err = c.WriteMessage(websocket.TextMessage, mJSON)
 			if err != nil {
 				fmt.Println("There was a problem writting message:", err)
 				return
 			}
+			tracker = (tracker + 1) % 2
 		}
 	}
 }

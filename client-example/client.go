@@ -13,9 +13,9 @@ import (
 	"github.com/kirkbyers/openstall-master/db"
 )
 
-// Init registers the test as door monitor and
+// Test registers the test as door monitor and
 // writes the current time every second to the ws conenction
-func Init() {
+func Test() {
 	// Register as monitor
 	regURL := url.URL{Scheme: "http", Host: "localhost:4567", Path: "/register"}
 	m := &db.Monitor{
