@@ -32,6 +32,7 @@ func main() {
 	handler := http.NewServeMux()
 	handler.Handle("/ws", routes.WebsocketHandler{})
 	handler.Handle("/", routes.ChatExampleHandler{})
+	handler.Handle("/register", routes.RegisterHandler{})
 
 	fmt.Printf("Server Listening on port %v\n", *port)
 	err = http.ListenAndServe(fmt.Sprintf(":%v", *port), handler)
