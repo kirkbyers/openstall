@@ -40,10 +40,17 @@ func (h *Hub) run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
+			// Decode JSON to ensure message is correct structure
 			var m db.Monitor
 			d := json.NewDecoder(bytes.NewBuffer(message))
 			if err := d.Decode(&m); err != nil {
+				// if message cannot be decoded as a monitor
 				fmt.Println("There was a message not matching type Monitor sent:", err)
+			} else {
+				// else update the db entry
+				if err := db.UpdateExistingMonitor(&m); err != nil {
+					fmt.Println("There was an issue updating monitor in DB from message:", err)
+				}
 			}
 		}
 	}

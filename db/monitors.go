@@ -3,6 +3,7 @@ package db
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/boltdb/bolt"
@@ -80,4 +81,26 @@ func AllMonitors() ([]Monitor, error) {
 		return nil, err
 	}
 	return monitors, nil
+}
+
+// UpdateExistingMonitor checks if the id the monitor to be updated exists before updating it
+func UpdateExistingMonitor(m *Monitor) error {
+	var err error
+	var allM []Monitor
+	allM, err = AllMonitors()
+	if err != nil {
+		return err
+	}
+	foundM := -1
+	for i, v := range allM {
+		if v.ID == m.ID {
+			foundM = i
+			break
+		}
+	}
+	if foundM < 0 {
+		return fmt.Errorf("monitorID \"%s\" does not exist", m.ID)
+	}
+	_, err = UpdateMonitor(m)
+	return err
 }
