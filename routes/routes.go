@@ -14,12 +14,15 @@ func Init() {
 
 }
 
-// ChatExampleHandler handles http req for serving the example chat app
-type ChatExampleHandler struct{}
+// StaticHandler handles http req for serving the example chat app
+type StaticHandler struct {
+	HTMLDoc string
+	Path    string
+}
 
-func (chat ChatExampleHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s StaticHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL)
-	if r.URL.Path != "/" {
+	if r.URL.Path != s.Path {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	}
@@ -27,7 +30,7 @@ func (chat ChatExampleHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "chat-example.html")
+	http.ServeFile(w, r, s.HTMLDoc)
 }
 
 // RegisterHandler handles registering Monitors
