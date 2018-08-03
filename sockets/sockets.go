@@ -63,5 +63,5 @@ func ServeWsSub(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	client.hub.registerSub <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines
-	go client.readPump()
+	go client.writePump()
 }
