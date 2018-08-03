@@ -31,7 +31,8 @@ func main() {
 	must(db.Init(dbPath))
 
 	handler := http.NewServeMux()
-	handler.Handle("/ws", routes.WebsocketHandler{})
+	handler.Handle("/pub", routes.WSPubHandler{})
+	handler.Handle("/sub", routes.WSSubHandler{})
 	handler.Handle("/register", routes.RegisterHandler{})
 
 	fmt.Printf("Server Listening on port %v\n", *port)

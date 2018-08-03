@@ -8,9 +8,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// PubClient is the middleman type connecting to Hub
+// SubClient is the middleman type connecting to Hub
 // Only has access to readPump
-type PubClient struct {
+type SubClient struct {
 	hub *Hub
 	// WS connection
 	conn *websocket.Conn
@@ -19,9 +19,9 @@ type PubClient struct {
 }
 
 // readPump pumps message from the websocker connection to the hub
-func (c *PubClient) readPump() {
+func (c *SubClient) readPump() {
 	defer func() {
-		c.hub.unregisterPub <- c
+		c.hub.unregisterSub <- c
 		c.conn.Close()
 	}()
 	c.conn.SetReadLimit(maxMessageSize)

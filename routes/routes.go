@@ -51,9 +51,16 @@ func (RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// WebsocketHandler is the handler for starting up ws client connections
-type WebsocketHandler struct{}
+// WSPubHandler is the handler for starting up ws client connections
+type WSPubHandler struct{}
 
-func (WebsocketHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	sockets.ServeWs(sockets.PublicHub, w, r)
+func (WSPubHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	sockets.ServeWsPub(sockets.PublicHub, w, r)
+}
+
+// WSSubHandler is the handler for starting up ws client connections
+type WSSubHandler struct{}
+
+func (WSSubHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	sockets.ServeWsSub(sockets.PublicHub, w, r)
 }

@@ -32,7 +32,7 @@ func Test() {
 	http.Post(regURL.String(), "json", bytes.NewBuffer(mJSON))
 
 	// Create dial-up URL at server address
-	u := url.URL{Scheme: "ws", Host: "localhost:4567", Path: "/ws"}
+	u := url.URL{Scheme: "ws", Host: "localhost:4567", Path: "/pub"}
 	// Create ws *Conn
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
