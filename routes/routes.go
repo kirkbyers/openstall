@@ -54,6 +54,31 @@ func (RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// MonitorStatusHandler returns the status of all monitors in a JSON formated array
+type MonitorStatusHandler struct{}
+
+func (MonitorStatusHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var err error
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	var allM []db.Monitor
+	allM, err = db.AllMonitors()
+	if err != nil {
+		http.Error(w, "There was a problem getting all monitors", 500)
+		return
+	}
+	var allMJSON []byte
+	allMJSON, err = json.Marshal(allM)
+	if err != nil {
+		http.Error(w, "There was a problem converting array of Monitors to JSON", 500)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(allMJSON)
+}
+
 // WSPubHandler is the handler for starting up ws client connections
 type WSPubHandler struct{}
 

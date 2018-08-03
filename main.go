@@ -35,6 +35,7 @@ func main() {
 	handler.Handle("/sub", routes.WSSubHandler{})
 	handler.Handle("/register", routes.RegisterHandler{})
 	handler.Handle("/", routes.StaticHandler{Path: "/", HTMLDoc: "doors.html"})
+	handler.Handle("/status", routes.MonitorStatusHandler{})
 
 	fmt.Printf("Server Listening on port %v\n", *port)
 	go http.ListenAndServe(fmt.Sprintf(":%v", *port), handler)
