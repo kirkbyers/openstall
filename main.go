@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 
 	"github.com/kirkbyers/openstall-master/db"
-	door "github.com/kirkbyers/openstall-master/door-monitor-example"
 	"github.com/kirkbyers/openstall-master/routes"
 	"github.com/kirkbyers/openstall-master/sockets"
 	homedir "github.com/mitchellh/go-homedir"
@@ -39,7 +38,7 @@ func main() {
 
 	fmt.Printf("Server Listening on port %v\n", *port)
 	go http.ListenAndServe(fmt.Sprintf(":%v", *port), handler)
-	door.Test()
+	// door.Test() // Test that toggles the status of a monitor every 2s
 	// client.Test() // There was a message not matching type Monitor sent: json: cannot unmarshal number into Go value of type db.Monitor
 	for {
 	}
