@@ -58,6 +58,7 @@ func (RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 type MonitorStatusHandler struct{}
 
 func (MonitorStatusHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var err error
 	if r.Method != "GET" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
