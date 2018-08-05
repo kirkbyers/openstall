@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node_modules/.bin/parcel index.html",
+    "build": "node_modules/.bin/parcel build index.html",
+    "release": "rm ../static/* && node_modules/.bin/parcel build -d ../static index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Kirk Byers",
