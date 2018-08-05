@@ -29,6 +29,8 @@ func main() {
 	dbPath := filepath.Join(home, "openstall.db")
 	must(db.Init(dbPath))
 
+	// Wire up routes
+	// TODO: Look at using a MuxRouter
 	handler := http.NewServeMux()
 	handler.Handle("/pub", routes.WSPubHandler{})
 	handler.Handle("/sub", routes.WSSubHandler{})
@@ -37,11 +39,7 @@ func main() {
 	handler.Handle("/status", routes.MonitorStatusHandler{})
 
 	fmt.Printf("Server Listening on port %v\n", *port)
-	go http.ListenAndServe(fmt.Sprintf(":%v", *port), handler)
-	// door.Test() // Test that toggles the status of a monitor every 2s
-	// client.Test() // There was a message not matching type Monitor sent: json: cannot unmarshal number into Go value of type db.Monitor
-	for {
-	}
+	must(http.ListenAndServe(fmt.Sprintf(":%v", *port), handler))
 }
 
 func must(err error) {
