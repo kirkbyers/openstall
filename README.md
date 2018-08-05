@@ -12,7 +12,7 @@ A distributed system for monitoring when stalls are open.
 
 ### WS message
 
-```json
+```
 {
     "fromId": string,
     "fromName": string,
@@ -23,7 +23,7 @@ A distributed system for monitoring when stalls are open.
 
 ### Registration
 
-```json
+```
 {
     "id": string,
     "name": string,

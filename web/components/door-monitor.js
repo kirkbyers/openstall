@@ -2,6 +2,8 @@ import { h, Component } from 'preact';
 import { icon } from '@fortawesome/fontawesome-svg-core'
 import { faDoorOpen, faDoorClosed } from '@fortawesome/free-solid-svg-icons'
 
+const apiBase = process.env.API_BASE || location.host;
+
 function updateMonitor(newMonitor, monitorArray) {
     const result = monitorArray.slice(0);
     let found = -1;
@@ -19,7 +21,7 @@ function updateMonitor(newMonitor, monitorArray) {
 }
 
 function getMonitors() {
-    return fetch(`//${process.env.API_BASE}/status`)
+    return fetch(`//${apiBase}/status`)
 }
 
 export class DoorMonitors extends Component {
@@ -27,7 +29,7 @@ export class DoorMonitors extends Component {
         super();
         this.state = {
             monitors: [],
-            wsConn: new WebSocket(`ws://${process.env.API_BASE}/sub`),
+            wsConn: new WebSocket(`ws://${apiBase}/sub`),
             wsConnected: true
         };
         this.state.wsConn.onclose = (evt) => {
@@ -49,7 +51,7 @@ export class DoorMonitors extends Component {
     render(props, state) {
         return (
             <div>
-                {state.monitors.map(((monitor) => {
+                {(state.monitors || []).map(((monitor) => {
                     return (
                         <DoorMonitor monitor={monitor} />
                     )
