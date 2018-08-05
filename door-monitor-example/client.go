@@ -42,8 +42,8 @@ func Test() {
 
 	// Start ticker for every other second
 	ticker := time.NewTicker(2 * time.Second)
-	tracker := 0
 	defer ticker.Stop()
+	tracker := 0
 
 	for {
 		select {
