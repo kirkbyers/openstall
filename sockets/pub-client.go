@@ -27,6 +27,7 @@ func (c *PubClient) readPump() {
 	c.conn.SetReadLimit(maxMessageSize)
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 	for {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {

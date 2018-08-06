@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -67,6 +69,10 @@ func main() {
 	ticker := time.NewTicker(250 * time.Millisecond)
 	defer ticker.Stop()
 
+	// Handle interuptions
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
+
 	for {
 		// Never ending loop to listen to ticker to check pin out
 		select {
@@ -78,9 +84,25 @@ func main() {
 			mStatus := doorMonitorStatus(pinVal)
 			if mStatus != m.Status {
 				m.Status = mStatus
-				must(sendMonitorUpdate(c, m))
+				err = sendMonitorUpdate(c, m)
+				if err != nil {
+					c.Close()
+					c, _, err = websocket.DefaultDialer.Dial(u.String(), nil)
+					if err != nil {
+						fmt.Println("There was a problem dialing WS server:", err)
+					}
+				}
 			}
+		case <-interrupt:
+			log.Println("interrupt")
 
+			// Cleanly close the connection by sending a close message and then
+			// waiting (with timeout) for the server to close the connection.
+			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+			if err != nil {
+				log.Println("write close:", err)
+				return
+			}
 		}
 	}
 }
@@ -89,14 +111,10 @@ func sendMonitorUpdate(c *websocket.Conn, m *db.Monitor) error {
 	// Send monitor as Text Message to WS conn
 	var err error
 	// Convert the monitor to JSON
-	var mJSON []byte
-	mJSON, err = json.Marshal(&m)
-	if err != nil {
-		return err
-	}
 	// Write the monitor Update
-	err = c.WriteMessage(websocket.TextMessage, mJSON)
+	err = c.WriteJSON(&m)
 	if err != nil {
+		fmt.Println("There was an issue writting JSON")
 		return err
 	}
 	return nil
