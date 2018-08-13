@@ -82,15 +82,13 @@ func main() {
 			must(err)
 			// Build the current status of the monitor
 			mStatus := doorMonitorStatus(pinVal)
-			if mStatus != m.Status {
-				m.Status = mStatus
-				err = sendMonitorUpdate(c, m)
+			m.Status = mStatus
+			err = sendMonitorUpdate(c, m)
+			if err != nil {
+				c.Close()
+				c, _, err = websocket.DefaultDialer.Dial(u.String(), nil)
 				if err != nil {
-					c.Close()
-					c, _, err = websocket.DefaultDialer.Dial(u.String(), nil)
-					if err != nil {
-						fmt.Println("There was a problem dialing WS server:", err)
-					}
+					fmt.Println("There was a problem dialing WS server:", err)
 				}
 			}
 		case <-interrupt:
